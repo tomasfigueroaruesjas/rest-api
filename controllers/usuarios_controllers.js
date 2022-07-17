@@ -15,7 +15,7 @@ const usuariosGet = (req=request, res) => {
 const usuariosPost = async (req=request, res) => {
     // validar que el email es valido
     const errors = validationResult(req);
-    if (errors) return res.status(400).json(errors);
+    if (!errors.isEmpty()) return res.status(400).json(errors);
 
     const {nombre, email, password, role} = req.body;
     const usuario = new Usuario({nombre, email, password, role});
