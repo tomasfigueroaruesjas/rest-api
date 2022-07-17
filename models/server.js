@@ -1,4 +1,5 @@
 const express = require('express')
+const { dbConnection } = require('../database/config')
 
 class Server {
     constructor() {
@@ -6,8 +7,14 @@ class Server {
         this.port = process.env.PORT
         this.usuariosPath = '/api/usuarios';
 
+        this.connectDb();
+
         this.middlewares(); // LOS MIDDLEWARES DEBEN LLAMARSE ANTES DE LAS RUTAS
         this.routes();
+    }
+
+    async connectDb() {
+        await dbConnection()
     }
 
     middlewares() {
