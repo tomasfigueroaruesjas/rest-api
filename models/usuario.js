@@ -16,7 +16,7 @@ const UsuarioSchema = Schema({
     },
     role: {
         type: String,
-        enum: ['ADMIN_ROLE', 'USER_ROLE']
+        // enum: ['ADMIN_ROLE', 'USER_ROLE']
     },
     img: {
         type: String
@@ -26,5 +26,11 @@ const UsuarioSchema = Schema({
         default: true
     }
 })
+
+// Quitar datos de la respuesta json
+UsuarioSchema.methods.toJSON=function() {
+    const { __v, password, ...usuario } = this.toObject();
+    return usuario;
+}
 
 module.exports = model('Usuario', UsuarioSchema)

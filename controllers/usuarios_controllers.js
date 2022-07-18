@@ -13,18 +13,8 @@ const usuariosGet = (req=request, res) => {
 }
 
 const usuariosPost = async (req=request, res) => {
-    // validar que el email es valido
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json(errors);
-
     const {nombre, email, password, role} = req.body;
     const usuario = new Usuario({nombre, email, password, role});
-
-    // validar si existe el email
-    const validarEmail = await Usuario.findOne({email})
-    if (validarEmail) return res.status(400).json({
-        msg: 'Ya existe el mail cheeee'
-    })
 
     // Encriptar contraseña
     const salt = bcryptjs.genSaltSync();
@@ -38,19 +28,30 @@ const usuariosPost = async (req=request, res) => {
     })
 }
 
-const usuariosPut = (req, res) => {
+const usuariosPut = async (req, res) => {
     const { id } = req.params;
+    const { _id, password, email, ...resto } = req.body;
+
+    if(password) {
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password, salt);
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate(id, resto, { new: true });
+
     res.json({
         msg: 'Peticion PUT - Controller',
-        userId: id
+        usuario
     })
 }
 
-const usuariosDelete = (req, res) => {
+const usuariosDelete = async (req, res) => {
     const { id } = req.params;
+    const usuarioBorrado = await Usuario.findByIdAndRemove(id);
+
     res.json({
-        msg: 'Peticion DELETE - Controller',
-        userId: id
+        msg: 'Borradisimo rey',
+        usuarioBorrado
     })
 }
 
