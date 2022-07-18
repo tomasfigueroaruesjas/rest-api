@@ -1,5 +1,8 @@
 const express = require('express')
+const cors = require('cors') // Libreria para evitar problema de CORS
+
 const { dbConnection } = require('../database/config')
+
 
 class Server {
     constructor() {
@@ -20,6 +23,8 @@ class Server {
     middlewares() {
         // habilitar uso de json para poder leer el body de una request
         this.app.use(express.json());
+
+        this.app.use(cors()) // Cors es un middleware
 
         // carpeta publica
         this.app.use(express.static("public"))
