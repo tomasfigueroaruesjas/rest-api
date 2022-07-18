@@ -3,12 +3,28 @@ const Usuario = require('../models/usuario')
 const bcryptjs = require('bcryptjs')
 const { validationResult } = require('express-validator')
 
-const usuariosGet = (req=request, res) => { 
-    const query = req.query;
+const usuariosGet = async (req=request, res) => { 
+    // No puedo dejar que entre todo lo que manden en la query. SQL Injection
+    const { limite=5, desde=0 } = req.query;
+    // const usuarios = await Usuario.find({status: true})
+    // .skip(desde)
+    // .limit(limite)
+
+    // const total = await Usuario.countDocuments({status: true})
+
+    // Peticiones simultaneas. Optimizacion de tiempos de peticiones
+    const [usuarios, total] = await Promise.all([
+        Usuario.find({status: true})
+        .skip(desde)
+        .limit(limite),
+        Usuario.countDocuments({status: true})
+    ])
 
     res.json({
-        msg: 'Peticion GET - Controller',
-        query: query
+        limite,
+        desde,
+        total,
+        usuarios
     })
 }
 
@@ -40,14 +56,20 @@ const usuariosPut = async (req, res) => {
     const usuario = await Usuario.findByIdAndUpdate(id, resto, { new: true });
 
     res.json({
-        msg: 'Peticion PUT - Controller',
+        msg: 'Usuario Actualizado',
         usuario
     })
 }
 
 const usuariosDelete = async (req, res) => {
     const { id } = req.params;
-    const usuarioBorrado = await Usuario.findByIdAndRemove(id);
+
+    // Inhabilitar usuario
+    const query = { status: false }
+    const usuarioBorrado = await Usuario.findByIdAndUpdate(id, query, { new: true });
+
+    // Borrando fisicamente el registro. No es buena practica
+    // const usuarioBorrado = await Usuario.findByIdAndDelete(id);
 
     res.json({
         msg: 'Borradisimo rey',

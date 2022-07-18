@@ -17,7 +17,7 @@ const esEmailValido = async (email) => {
 
 const usuarioExistePorId = async (id) => {
     const validarId = await Usuario.findOne({
-        id
+        _id: id
     }) // Por que se busca en el schema? Como llega a la base de datos?
     if (!validarId) throw new Error(`El id ${id} no existe`)
 }
