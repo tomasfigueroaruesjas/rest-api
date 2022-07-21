@@ -22,6 +22,14 @@ const validarJWT = async (req = request, res, next) => {
             msg: 'Token no valido'
         })
 
+        // verificar si el usuario esta activo
+        if(!usuario.status) return res.status(401).json({
+            msg: 'Token no valido'
+        })
+
+        // guardar la info de usuario en una nueva propiedad 'usuario' en la request
+        req.usuario = usuario;
+
         next()
     } catch (error) {
         console.log(error)

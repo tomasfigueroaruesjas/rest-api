@@ -1,5 +1,6 @@
 const Role = require('../models/role')
 const Usuario = require('../models/usuario')
+const Blog = require('../helpers/generar-jwt')
 
 const esRoleValido = async (role = "") => {
     const existeRole = await Role.findOne({
@@ -22,9 +23,17 @@ const usuarioExistePorId = async (id) => {
     if (!validarId) throw new Error(`El id ${id} no existe`)
 }
 
+const existeBlogById = async (id) => {
+    const existeBlog = await Blog.findById({
+        _id: id
+    })
+
+    if (!validarId) throw new Error(`El id ${id} no existe`)
+}
 
 module.exports = {
     esRoleValido,
     esEmailValido,
-    usuarioExistePorId
+    usuarioExistePorId,
+    existeBlogById
 }
